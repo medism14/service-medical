@@ -1,23 +1,28 @@
 package com.medical_record_service.medical_record_service.models;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 public class MedicalRecordResponseDTO {
     private Long id;
-    private String patientEmail;
-    private String patientSocialSecurityNumber;
     private PatientDTO patient;
-    private String practitionerEmail;
     private PractitionerDTO practitioner;
-    private List<String> allergies;
-    private List<MedicalRecord.MedicalEntry> medicalHistory;
-    private String status;
-    private LocalDateTime lastUpdated;
-    private String lastUpdatedBy;
+    private String diagnosis;
+    private String treatment;
+    private String prescription;
+    private String notes;
 
-    // Constructeur par défaut
+    // Constructeurs
     public MedicalRecordResponseDTO() {
+    }
+
+    public MedicalRecordResponseDTO(Long id, PatientDTO patient, PractitionerDTO practitioner,
+            String diagnosis, String treatment,
+            String prescription, String notes) {
+        this.id = id;
+        this.patient = patient;
+        this.practitioner = practitioner;
+        this.diagnosis = diagnosis;
+        this.treatment = treatment;
+        this.prescription = prescription;
+        this.notes = notes;
     }
 
     // Getters et Setters
@@ -29,36 +34,12 @@ public class MedicalRecordResponseDTO {
         this.id = id;
     }
 
-    public String getPatientEmail() {
-        return patientEmail;
-    }
-
-    public void setPatientEmail(String patientEmail) {
-        this.patientEmail = patientEmail;
-    }
-
-    public String getPatientSocialSecurityNumber() {
-        return patientSocialSecurityNumber;
-    }
-
-    public void setPatientSocialSecurityNumber(String patientSocialSecurityNumber) {
-        this.patientSocialSecurityNumber = patientSocialSecurityNumber;
-    }
-
     public PatientDTO getPatient() {
         return patient;
     }
 
     public void setPatient(PatientDTO patient) {
         this.patient = patient;
-    }
-
-    public String getPractitionerEmail() {
-        return practitionerEmail;
-    }
-
-    public void setPractitionerEmail(String practitionerEmail) {
-        this.practitionerEmail = practitionerEmail;
     }
 
     public PractitionerDTO getPractitioner() {
@@ -69,43 +50,35 @@ public class MedicalRecordResponseDTO {
         this.practitioner = practitioner;
     }
 
-    public List<String> getAllergies() {
-        return allergies;
+    public String getDiagnosis() {
+        return diagnosis;
     }
 
-    public void setAllergies(List<String> allergies) {
-        this.allergies = allergies;
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
-    public List<MedicalRecord.MedicalEntry> getMedicalHistory() {
-        return medicalHistory;
+    public String getTreatment() {
+        return treatment;
     }
 
-    public void setMedicalHistory(List<MedicalRecord.MedicalEntry> medicalHistory) {
-        this.medicalHistory = medicalHistory;
+    public void setTreatment(String treatment) {
+        this.treatment = treatment;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPrescription() {
+        return prescription;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
     }
 
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-} 
+}

@@ -1,29 +1,30 @@
 package com.appointment_service.appointment_service.models;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "appointments")
-public class Appointment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AppointmentResponseDTO {
     private Long id;
-
-    private String patientEmail;
-    private String practitionerEmail;
-
-    @Column(name = "start_time")
+    private PatientDTO patient;
+    private PractitionerDTO practitioner;
     private LocalDateTime startTime;
-
-    @Column(name = "end_time")
     private LocalDateTime endTime;
-
     private String reason;
     private String status;
     private String urlCalendar;
 
-    // Getters and setters
+    // Constructeur
+    public AppointmentResponseDTO(Appointment appointment, PatientDTO patient, PractitionerDTO practitioner) {
+        this.id = appointment.getId();
+        this.patient = patient;
+        this.practitioner = practitioner;
+        this.startTime = appointment.getStartTime();
+        this.endTime = appointment.getEndTime();
+        this.reason = appointment.getReason();
+        this.status = appointment.getStatus();
+        this.urlCalendar = appointment.getUrlCalendar();
+    }
+
+    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -32,20 +33,20 @@ public class Appointment {
         this.id = id;
     }
 
-    public String getPatientEmail() {
-        return patientEmail;
+    public PatientDTO getPatient() {
+        return patient;
     }
 
-    public void setPatientEmail(String patientEmail) {
-        this.patientEmail = patientEmail;
+    public void setPatient(PatientDTO patient) {
+        this.patient = patient;
     }
 
-    public String getPractitionerEmail() {
-        return practitionerEmail;
+    public PractitionerDTO getPractitioner() {
+        return practitioner;
     }
 
-    public void setPractitionerEmail(String practitionerEmail) {
-        this.practitionerEmail = practitionerEmail;
+    public void setPractitioner(PractitionerDTO practitioner) {
+        this.practitioner = practitioner;
     }
 
     public LocalDateTime getStartTime() {
@@ -87,4 +88,4 @@ public class Appointment {
     public void setUrlCalendar(String urlCalendar) {
         this.urlCalendar = urlCalendar;
     }
-}
+} 

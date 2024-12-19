@@ -1,83 +1,36 @@
 package com.medical_record_service.medical_record_service.models;
 
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "medical_records")
 public class MedicalRecord {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
     private String patientEmail;
-
-    @Column(nullable = false)
-    private String patientSocialSecurityNumber;
-
-    @Column(nullable = false)
     private String practitionerEmail;
+    private String diagnosis;
+    private String treatment;
+    private String prescription;
+    private String notes;
 
-    @ElementCollection
-    private List<MedicalEntry> medicalHistory = new ArrayList<>();
+    // Constructeurs
+    public MedicalRecord() {}
 
-    @ElementCollection
-    private List<String> allergies = new ArrayList<>();
-
-    @Column(nullable = false)
-    private String status = "ACTIVE";
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private LocalDateTime lastUpdated = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private String lastUpdatedBy;
-
-    // Classes imbriquées pour une meilleure structure des données
-    @Embeddable
-    public static class MedicalEntry {
-        private LocalDateTime date;
-        private String practitionerEmail;
-        private String description;
-        private String type; // CONSULTATION, DIAGNOSTIC, NOTE, etc.
-
-        public LocalDateTime getDate() {
-            return date;
-        }
-
-        public void setDate(LocalDateTime date) {
-            this.date = date;
-        }
-
-        public String getPractitionerEmail() {
-            return practitionerEmail;
-        }
-
-        public void setPractitionerEmail(String practitionerEmail) {
-            this.practitionerEmail = practitionerEmail;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
+    public MedicalRecord(String patientEmail, String practitionerEmail, 
+                        String diagnosis, String treatment, String prescription, String notes) {
+        this.patientEmail = patientEmail;
+        this.practitionerEmail = practitionerEmail;
+        this.diagnosis = diagnosis;
+        this.treatment = treatment;
+        this.prescription = prescription;
+        this.notes = notes;
     }
 
     // Getters et Setters
@@ -97,14 +50,6 @@ public class MedicalRecord {
         this.patientEmail = patientEmail;
     }
 
-    public String getPatientSocialSecurityNumber() {
-        return patientSocialSecurityNumber;
-    }
-
-    public void setPatientSocialSecurityNumber(String patientSocialSecurityNumber) {
-        this.patientSocialSecurityNumber = patientSocialSecurityNumber;
-    }
-
     public String getPractitionerEmail() {
         return practitionerEmail;
     }
@@ -113,51 +58,35 @@ public class MedicalRecord {
         this.practitionerEmail = practitionerEmail;
     }
 
-    public List<MedicalEntry> getMedicalHistory() {
-        return medicalHistory;
+    public String getDiagnosis() {
+        return diagnosis;
     }
 
-    public void setMedicalHistory(List<MedicalEntry> medicalHistory) {
-        this.medicalHistory = medicalHistory;
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
     }
 
-    public List<String> getAllergies() {
-        return allergies;
+    public String getTreatment() {
+        return treatment;
     }
 
-    public void setAllergies(List<String> allergies) {
-        this.allergies = allergies;
+    public void setTreatment(String treatment) {
+        this.treatment = treatment;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPrescription() {
+        return prescription;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

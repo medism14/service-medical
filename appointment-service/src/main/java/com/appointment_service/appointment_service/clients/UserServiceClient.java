@@ -1,129 +1,129 @@
 package com.appointment_service.appointment_service.clients;
 
+import com.appointment_service.appointment_service.models.PatientDTO;
+import com.appointment_service.appointment_service.models.PractitionerDTO;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.appointment_service.appointment_service.models.PatientDTO;
-import com.appointment_service.appointment_service.models.PractitionerDTO;
-
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class UserServiceClient {
-
     private static final Logger logger = LoggerFactory.getLogger(UserServiceClient.class);
-    private final RestTemplate restTemplate;
-    private static final String PATIENT_BASE_URL = "http://localhost:8001/patients";
-    private static final String PRACTITIONER_BASE_URL = "http://localhost:8002/practitioners";
-
+    
     @Autowired
-    public UserServiceClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private RestTemplate restTemplate;
+    
+    private static final String PATIENT_SERVICE_URL = "http://localhost:8001";
+    private static final String PRACTITIONER_SERVICE_URL = "http://localhost:8002";
 
-    @CircuitBreaker(name = "patientService", fallbackMethod = "getPatientFallback")
-    public PatientDTO getPatientByEmail(String email) {
-        logger.info("Fetching patient data for email: {}", email);
-        try {
-            ResponseEntity<PatientDTO> response = restTemplate.getForEntity(
-                    PATIENT_BASE_URL + "/email/" + email,
-                    PatientDTO.class);
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                return response.getBody();
-            }
-            throw new RuntimeException("Patient service returned no data");
-        } catch (Exception e) {
-            logger.error("Error fetching patient data: {}", e.getMessage());
-            throw e;
-        }
-    }
-
-    @CircuitBreaker(name = "practitionerService", fallbackMethod = "getPractitionerFallback")
-    public PractitionerDTO getPractitionerByEmail(String email) {
-        logger.info("Fetching practitioner data for email: {}", email);
-        try {
-            ResponseEntity<PractitionerDTO> response = restTemplate.getForEntity(
-                    PRACTITIONER_BASE_URL + "/email/" + email,
-                    PractitionerDTO.class);
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                return response.getBody();
-            }
-            throw new RuntimeException("Practitioner service returned no data");
-        } catch (Exception e) {
-            logger.error("Error fetching practitioner data: {}", e.getMessage());
-            throw e;
-        }
-    }
-
-    public PatientDTO getPatientFallback(String email, Exception ex) {
-        logger.warn("Fallback for patient service. Email: {}, Error: {}", email, ex.getMessage());
-        PatientDTO fallbackPatient = new PatientDTO();
-        fallbackPatient.setEmail(email);
-        fallbackPatient.setFirstName("Service Indisponible");
-        fallbackPatient.setLastName("Service Indisponible");
-        return fallbackPatient;
-    }
-
-    public PractitionerDTO getPractitionerFallback(String email, Exception ex) {
-        logger.warn("Fallback for practitioner service. Email: {}, Error: {}", email, ex.getMessage());
-        PractitionerDTO fallbackPractitioner = new PractitionerDTO();
-        fallbackPractitioner.setEmail(email);
-        fallbackPractitioner.setFirstName("Service Indisponible");
-        fallbackPractitioner.setLastName("Service Indisponible");
-        return fallbackPractitioner;
-    }
-
-    @CircuitBreaker(name = "patientService", fallbackMethod = "getAllPatientsFallback")
+    @Retry(name = "userService", fallbackMethod = "getAllPatientsFallback")
+    @CircuitBreaker(name = "userService", fallbackMethod = "getAllPatientsFallback")
     public List<PatientDTO> getAllPatients() {
-        logger.info("Fetching all patients");
         try {
             ResponseEntity<List<PatientDTO>> response = restTemplate.exchange(
-                    PATIENT_BASE_URL,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<PatientDTO>>() {
-                    });
+                PATIENT_SERVICE_URL + "/patients",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<PatientDTO>>() {}
+            );
             return response.getBody() != null ? response.getBody() : new ArrayList<>();
         } catch (Exception e) {
-            logger.error("Error fetching all patients: {}", e.getMessage());
-            return new ArrayList<>();
+            logger.error("Error fetching patients: {}", e.getMessage());
+            throw e;
         }
     }
 
-    @CircuitBreaker(name = "practitionerService", fallbackMethod = "getAllPractitionersFallback")
+    @Retry(name = "userService", fallbackMethod = "getAllPractitionersFallback")
+    @CircuitBreaker(name = "userService", fallbackMethod = "getAllPractitionersFallback")
     public List<PractitionerDTO> getAllPractitioners() {
-        logger.info("Fetching all practitioners");
         try {
             ResponseEntity<List<PractitionerDTO>> response = restTemplate.exchange(
-                    PRACTITIONER_BASE_URL,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<PractitionerDTO>>() {
-                    });
+                PRACTITIONER_SERVICE_URL + "/practitioners",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<PractitionerDTO>>() {}
+            );
             return response.getBody() != null ? response.getBody() : new ArrayList<>();
         } catch (Exception e) {
-            logger.error("Error fetching all practitioners: {}", e.getMessage());
-            return new ArrayList<>();
+            logger.error("Error fetching practitioners: {}", e.getMessage());
+            throw e;
         }
     }
 
-    public List<PatientDTO> getAllPatientsFallback(Exception ex) {
-        logger.warn("Fallback for getting all patients. Error: {}", ex.getMessage());
+    @Retry(name = "userService", fallbackMethod = "getPatientByEmailFallback")
+    @CircuitBreaker(name = "userService", fallbackMethod = "getPatientByEmailFallback")
+    public PatientDTO getPatientByEmail(String email) {
+        try {
+            PatientDTO patient = restTemplate.getForObject(
+                PATIENT_SERVICE_URL + "/patients/email/" + email,
+                PatientDTO.class
+            );
+            return patient != null ? patient : createDefaultPatient(email);
+        } catch (Exception e) {
+            logger.error("Error fetching patient: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Retry(name = "userService", fallbackMethod = "getPractitionerByEmailFallback")
+    @CircuitBreaker(name = "userService", fallbackMethod = "getPractitionerByEmailFallback")
+    public PractitionerDTO getPractitionerByEmail(String email) {
+        try {
+            PractitionerDTO practitioner = restTemplate.getForObject(
+                PRACTITIONER_SERVICE_URL + "/practitioners/email/" + email,
+                PractitionerDTO.class
+            );
+            return practitioner != null ? practitioner : createDefaultPractitioner(email);
+        } catch (Exception e) {
+            logger.error("Error fetching practitioner: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    // Méthodes de fallback
+    public List<PatientDTO> getAllPatientsFallback(Exception e) {
+        logger.warn("Fallback for getAllPatients: {}", e.getMessage());
         return new ArrayList<>();
     }
 
-    public List<PractitionerDTO> getAllPractitionersFallback(Exception ex) {
-        logger.warn("Fallback for getting all practitioners. Error: {}", ex.getMessage());
+    public List<PractitionerDTO> getAllPractitionersFallback(Exception e) {
+        logger.warn("Fallback for getAllPractitioners: {}", e.getMessage());
         return new ArrayList<>();
+    }
+
+    public PatientDTO getPatientByEmailFallback(String email, Exception e) {
+        logger.warn("Fallback for getPatientByEmail: {}", e.getMessage());
+        return createDefaultPatient(email);
+    }
+
+    public PractitionerDTO getPractitionerByEmailFallback(String email, Exception e) {
+        logger.warn("Fallback for getPractitionerByEmail: {}", e.getMessage());
+        return createDefaultPractitioner(email);
+    }
+
+    private PatientDTO createDefaultPatient(String email) {
+        PatientDTO patient = new PatientDTO();
+        patient.setEmail(email);
+        patient.setFirstName("Indisponible");
+        patient.setLastName("Indisponible");
+        return patient;
+    }
+
+    private PractitionerDTO createDefaultPractitioner(String email) {
+        PractitionerDTO practitioner = new PractitionerDTO();
+        practitioner.setEmail(email);
+        practitioner.setFirstName("Indisponible");
+        practitioner.setLastName("Indisponible");
+        return practitioner;
     }
 }
