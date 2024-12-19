@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.patient_service.patient_service.repository.PatientRepository;
 import com.patient_service.patient_service.models.Patient;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,32 +46,28 @@ public class PatientService {
 
     public ResponseEntity<Void> createPatients() {
         try {
-            String[][] patientsData = {
-                {"Jean", "Dupont", "jean.dupont@example.com", "0123456781", "1 rue de Paris"},
-                {"Marie", "Curie", "marie.curie@example.com", "0123456782", "2 avenue des Champs"},
-                {"Pierre", "Martin", "pierre.martin@example.com", "0123456783", "3 boulevard Saint-Germain"},
-                {"Sophie", "Durand", "sophie.durand@example.com", "0123456784", "4 place de la République"},
-                {"Luc", "Bernard", "luc.bernard@example.com", "0123456785", "5 chemin de la Liberté"},
-                {"Claire", "Lefevre", "claire.lefevre@example.com", "0123456786", "6 impasse des Fleurs"},
-                {"Paul", "Moreau", "paul.moreau@example.com", "0123456787", "7 route de la Mer"},
-                {"Emma", "Simon", "emma.simon@example.com", "0123456788", "8 allée des Écoles"},
-                {"Julien", "Garnier", "julien.garnier@example.com", "0123456789", "9 rue des Artistes"},
-                {"Alice", "Rousseau", "alice.rousseau@example.com", "0123456790", "10 avenue de la Paix"}
+            Object[][] patientsData = {
+                    { "Jean", "Dupont", "jean.dupont@example.com", LocalDate.of(1980, 5, 15),
+                            "0123456789", "123 Rue de Paris", "180055512345678" },
+                    { "Marie", "Curie", "marie.curie@example.com", LocalDate.of(1975, 8, 22),
+                            "0234567890", "456 Avenue des Sciences", "275086612345678" },
+                    { "Pierre", "Martin", "pierre.martin@example.com", LocalDate.of(1990, 3, 10),
+                            "0345678901", "789 Boulevard des Arts", "190036712345678" }
             };
 
-            for (String[] data : patientsData) {
-                Patient patient = new Patient();
-                patient.setFirstName(data[0]);
-                patient.setLastName(data[1]);
-                patient.setEmail(data[2]);
-                patient.setPhoneNumber(data[3]);
-                patient.setAddress(data[4]);
-
-                if (patientRepository.findByEmail(patient.getEmail()).isPresent()) {
-                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+            for (Object[] data : patientsData) {
+                if (!patientRepository.existsByEmail((String) data[2]) &&
+                    !patientRepository.existsBySocialSecurityNumber((String) data[6])) {
+                    Patient patient = new Patient();
+                    patient.setFirstName((String) data[0]);
+                    patient.setLastName((String) data[1]);
+                    patient.setEmail((String) data[2]);
+                    patient.setDateOfBirth((LocalDate) data[3]);
+                    patient.setPhoneNumber((String) data[4]);
+                    patient.setAddress((String) data[5]);
+                    patient.setSocialSecurityNumber((String) data[6]);
+                    patientRepository.save(patient);
                 }
-
-                patientRepository.save(patient);
             }
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
@@ -107,6 +104,16 @@ public class PatientService {
             }
             patientRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<Patient> getPatientBySocialSecurityNumber(String ssn) {
+        try {
+            Optional<Patient> patient = patientRepository.findBySocialSecurityNumber(ssn);
+            return patient.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

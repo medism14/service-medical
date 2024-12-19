@@ -1,6 +1,7 @@
 package com.patient_service.patient_service.models;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "patients")
@@ -19,9 +20,16 @@ public class Patient {
     private String email;
 
     @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Column(nullable = false)
     private String phoneNumber;
 
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false, unique = true)
+    private String socialSecurityNumber;
 
     public Long getId() {
         return id;
@@ -55,6 +63,14 @@ public class Patient {
         this.email = email;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -69,5 +85,13 @@ public class Patient {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getSocialSecurityNumber() {
+        return socialSecurityNumber;
+    }
+
+    public void setSocialSecurityNumber(String socialSecurityNumber) {
+        this.socialSecurityNumber = socialSecurityNumber;
     }
 }
