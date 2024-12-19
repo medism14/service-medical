@@ -1,6 +1,5 @@
 package com.appointment_service.appointment_service.controllers;
 
-import com.appointment_service.appointment_service.models.Appointment;
 import com.appointment_service.appointment_service.models.AppointmentResponseDTO;
 import com.appointment_service.appointment_service.services.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
