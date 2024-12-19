@@ -53,13 +53,6 @@ Chaque service utilise une base de données H2 en mémoire avec :
 - Utilisateur : `sa`
 - Mot de passe : `password`
 
-## Fonctionnalités
-- Circuit Breaker avec Resilience4j
-- Gestion des erreurs avec fallbacks
-- Données de test générées automatiquement
-- Intégration avec Google Calendar pour les rendez-vous
-- Documentation Swagger/OpenAPI disponible pour chaque service
-
 ## Démarrage
 1. Lancer les services dans l'ordre :
    - Patient Service
@@ -70,4 +63,4 @@ Chaque service utilise une base de données H2 en mémoire avec :
 
 2. Créer des données via les endpoints POST de chaque service
 
-3. Accéder aux services via le Gateway (port 8005) ou directement via leurs ports respectifs
+3. Accéder aux services via le Gateway (port 8000) ou directement via leurs ports respectifs
