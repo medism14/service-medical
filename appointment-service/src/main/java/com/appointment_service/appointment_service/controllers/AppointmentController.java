@@ -30,8 +30,18 @@ public class AppointmentController {
         return appointmentService.getAppointmentById(id);
     }
 
+    @GetMapping("/patient/{email}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByPatient(@PathVariable String email) {
+        return appointmentService.getAppointmentsByPatient(email);
+    }
+
+    @GetMapping("/practitioner/{email}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByPractitioner(@PathVariable String email) {
+        return appointmentService.getAppointmentsByPractitioner(email);
+    }
+
     @PostMapping
-    public ResponseEntity<Void> createAppointments() {
+    public ResponseEntity<Void> createAppointment() {
         return appointmentService.createAppointments();
     }
 
@@ -43,15 +53,5 @@ public class AppointmentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         return appointmentService.deleteAppointment(id);
-    }
-
-    @GetMapping("/patient/email/{email}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByPatientEmail(@PathVariable String email) {
-        return appointmentService.getAppointmentsByPatient(email);
-    }
-
-    @GetMapping("/practitioner/email/{email}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByPractitionerEmail(@PathVariable String email) {
-        return appointmentService.getAppointmentsByPractitioner(email);
     }
 } 

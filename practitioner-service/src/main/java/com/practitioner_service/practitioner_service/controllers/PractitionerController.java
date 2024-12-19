@@ -44,4 +44,9 @@ public class PractitionerController {
     public ResponseEntity<Void> deletePractitioner(@PathVariable Long id) {
         return practitionerService.deletePractitioner(id);
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Practitioner> getPractitionerByEmail(@PathVariable String email) {
+        return practitionerService.getPractitionerByEmail(email);
+    }
 } 

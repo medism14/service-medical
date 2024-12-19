@@ -44,4 +44,9 @@ public class PatientController {
     public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         return patientService.deletePatient(id);
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Patient> getPatientByEmail(@PathVariable String email) {
+        return patientService.getPatientByEmail(email);
+    }
 }

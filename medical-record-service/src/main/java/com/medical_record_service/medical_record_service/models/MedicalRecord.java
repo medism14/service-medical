@@ -18,17 +18,11 @@ public class MedicalRecord {
     @Column(nullable = false)
     private String patientSocialSecurityNumber;
 
+    @Column(nullable = false)
+    private String practitionerEmail;
+
     @ElementCollection
     private List<MedicalEntry> medicalHistory = new ArrayList<>();
-
-    @ElementCollection
-    private List<Treatment> treatments = new ArrayList<>();
-
-    @ElementCollection
-    private List<Examination> examinations = new ArrayList<>();
-
-    @ElementCollection
-    private List<Prescription> prescriptions = new ArrayList<>();
 
     @ElementCollection
     private List<String> allergies = new ArrayList<>();
@@ -86,198 +80,6 @@ public class MedicalRecord {
         }
     }
 
-    @Embeddable
-    public static class Treatment {
-        private LocalDateTime startDate;
-        private LocalDateTime endDate;
-        private String name;
-        private String dosage;
-        private String frequency;
-        private String practitionerEmail;
-        private String notes;
-
-        public LocalDateTime getStartDate() {
-            return startDate;
-        }
-
-        public void setStartDate(LocalDateTime startDate) {
-            this.startDate = startDate;
-        }
-
-        public LocalDateTime getEndDate() {
-            return endDate;
-        }
-
-        public void setEndDate(LocalDateTime endDate) {
-            this.endDate = endDate;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDosage() {
-            return dosage;
-        }
-
-        public void setDosage(String dosage) {
-            this.dosage = dosage;
-        }
-
-        public String getFrequency() {
-            return frequency;
-        }
-
-        public void setFrequency(String frequency) {
-            this.frequency = frequency;
-        }
-
-        public String getPractitionerEmail() {
-            return practitionerEmail;
-        }
-
-        public void setPractitionerEmail(String practitionerEmail) {
-            this.practitionerEmail = practitionerEmail;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
-    }
-
-    @Embeddable
-    public static class Examination {
-        private LocalDateTime date;
-        private String type;
-        private String result;
-        private String practitionerEmail;
-        private String notes;
-
-        public LocalDateTime getDate() {
-            return date;
-        }
-
-        public void setDate(LocalDateTime date) {
-            this.date = date;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getResult() {
-            return result;
-        }
-
-        public void setResult(String result) {
-            this.result = result;
-        }
-
-        public String getPractitionerEmail() {
-            return practitionerEmail;
-        }
-
-        public void setPractitionerEmail(String practitionerEmail) {
-            this.practitionerEmail = practitionerEmail;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
-    }
-
-    @Embeddable
-    public static class Prescription {
-        private LocalDateTime date;
-        private LocalDateTime expiryDate;
-        private String medication;
-        private String dosage;
-        private String frequency;
-        private String duration;
-        private String practitionerEmail;
-        private String notes;
-
-        public LocalDateTime getDate() {
-            return date;
-        }
-
-        public void setDate(LocalDateTime date) {
-            this.date = date;
-        }
-
-        public LocalDateTime getExpiryDate() {
-            return expiryDate;
-        }
-
-        public void setExpiryDate(LocalDateTime expiryDate) {
-            this.expiryDate = expiryDate;
-        }
-
-        public String getMedication() {
-            return medication;
-        }
-
-        public void setMedication(String medication) {
-            this.medication = medication;
-        }
-
-        public String getDosage() {
-            return dosage;
-        }
-
-        public void setDosage(String dosage) {
-            this.dosage = dosage;
-        }
-
-        public String getFrequency() {
-            return frequency;
-        }
-
-        public void setFrequency(String frequency) {
-            this.frequency = frequency;
-        }
-
-        public String getDuration() {
-            return duration;
-        }
-
-        public void setDuration(String duration) {
-            this.duration = duration;
-        }
-
-        public String getPractitionerEmail() {
-            return practitionerEmail;
-        }
-
-        public void setPractitionerEmail(String practitionerEmail) {
-            this.practitionerEmail = practitionerEmail;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
-    }
-
     // Getters et Setters
     public Long getId() {
         return id;
@@ -303,36 +105,20 @@ public class MedicalRecord {
         this.patientSocialSecurityNumber = patientSocialSecurityNumber;
     }
 
+    public String getPractitionerEmail() {
+        return practitionerEmail;
+    }
+
+    public void setPractitionerEmail(String practitionerEmail) {
+        this.practitionerEmail = practitionerEmail;
+    }
+
     public List<MedicalEntry> getMedicalHistory() {
         return medicalHistory;
     }
 
     public void setMedicalHistory(List<MedicalEntry> medicalHistory) {
         this.medicalHistory = medicalHistory;
-    }
-
-    public List<Treatment> getTreatments() {
-        return treatments;
-    }
-
-    public void setTreatments(List<Treatment> treatments) {
-        this.treatments = treatments;
-    }
-
-    public List<Examination> getExaminations() {
-        return examinations;
-    }
-
-    public void setExaminations(List<Examination> examinations) {
-        this.examinations = examinations;
-    }
-
-    public List<Prescription> getPrescriptions() {
-        return prescriptions;
-    }
-
-    public void setPrescriptions(List<Prescription> prescriptions) {
-        this.prescriptions = prescriptions;
     }
 
     public List<String> getAllergies() {

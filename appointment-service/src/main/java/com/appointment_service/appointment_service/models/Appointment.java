@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "appointments")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,21 +15,17 @@ public class Appointment {
     @Column(nullable = false)
     private String practitionerEmail;
 
-    @Column(nullable = false)
+    @Transient
+    private PatientDTO patient;
+
+    @Transient
+    private PractitionerDTO practitioner;
+
     private LocalDateTime startTime;
-
-    @Column(nullable = false)
     private LocalDateTime endTime;
-
-    @Column(nullable = false)
     private String status;
-
     private String notes;
-
-    @Column
     private String googleEventUrl;
-
-    @Column(nullable = false)
     private String location;
 
     // Getters et Setters
@@ -56,6 +51,28 @@ public class Appointment {
 
     public void setPractitionerEmail(String practitionerEmail) {
         this.practitionerEmail = practitionerEmail;
+    }
+
+    public PatientDTO getPatient() {
+        return patient;
+    }
+
+    public void setPatient(PatientDTO patient) {
+        this.patient = patient;
+        if (patient != null) {
+            this.patientEmail = patient.getEmail();
+        }
+    }
+
+    public PractitionerDTO getPractitioner() {
+        return practitioner;
+    }
+
+    public void setPractitioner(PractitionerDTO practitioner) {
+        this.practitioner = practitioner;
+        if (practitioner != null) {
+            this.practitionerEmail = practitioner.getEmail();
+        }
     }
 
     public LocalDateTime getStartTime() {
