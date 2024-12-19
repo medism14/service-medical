@@ -1,84 +1,142 @@
+<!-- @format -->
+
 # Projet de Gestion Médicale - Microservices
 
-> **Note importante**: La documentation Swagger utilise springdoc-openapi au lieu de Springfox Swagger 3.0.0 en raison de problèmes de compatibilité avec Spring Boot 3.x.
+## Description
 
-## Services disponibles
+Système de gestion médicale basé sur une architecture microservices permettant la gestion des patients, praticiens, rendez-vous et dossiers médicaux.
 
-### 1. Patient Service (Port: 8001)
-Endpoints :
-- `GET /patients` - Liste tous les patients
-- `GET /patients/{id}` - Récupère un patient par ID
-- `GET /patients/email/{email}` - Récupère un patient par email
-- `POST /patients` - Crée un nouveau patient
-- `PUT /patients/{id}` - Met à jour un patient
-- `DELETE /patients/{id}` - Supprime un patient
+> **Note importante** : La documentation Swagger 3 est utilisée dans ce projet via la dépendance springdoc-openapi-starter-webmvc-ui, version 2.3.0. Swagger 3 normal est incompatible avec Java 17 / Spring Boot 3.x.
 
-Documentation API :
-- Swagger UI : http://localhost:8001/swagger-ui/index.html
-- Documentation OpenAPI : http://localhost:8001/api-docs
+## Prérequis
 
-### 2. Practitioner Service (Port: 8002)
-Endpoints :
-- `GET /practitioners` - Liste tous les praticiens
-- `GET /practitioners/{id}` - Récupère un praticien par ID
-- `GET /practitioners/email/{email}` - Récupère un praticien par email
-- `POST /practitioners` - Crée un nouveau praticien
-- `PUT /practitioners/{id}` - Met à jour un praticien
-- `DELETE /practitioners/{id}` - Supprime un praticien
+- Java 17
+- Maven 3.8+
+- Docker et Docker Compose (optionnel)
+- Au moins 8GB de RAM disponible
+- Ports 8000-8004, 8761 disponibles
 
-Documentation API :
-- Swagger UI : http://localhost:8002/swagger-ui/index.html
-- Documentation OpenAPI : http://localhost:8002/api-docs
+## Architecture des Services
 
-### 3. Appointment Service (Port: 8003)
-Endpoints :
-- `GET /appointments` - Liste tous les rendez-vous
-- `GET /appointments/{id}` - Récupère un rendez-vous par ID
-- `GET /appointments/patient/{email}` - Liste les rendez-vous d'un patient
-- `GET /appointments/practitioner/{email}` - Liste les rendez-vous d'un praticien
-- `POST /appointments` - Crée un nouveau rendez-vous
-- `PUT /appointments/{id}` - Met à jour un rendez-vous
-- `DELETE /appointments/{id}` - Supprime un rendez-vous
+### Service Discovery (Eureka Server) - Port 8761
 
-Documentation API :
-- Swagger UI : http://localhost:8003/swagger-ui/index.html
-- Documentation OpenAPI : http://localhost:8003/api-docs
+- Service de découverte et d'enregistrement des microservices
+- Dashboard : http://localhost:8761
+- Dashboard Admin : http://localhost:8761/admin/dashboard
 
-### 4. Medical Record Service (Port: 8004)
-Endpoints :
-- `GET /medical-records` - Liste tous les dossiers médicaux
-- `GET /medical-records/{id}` - Récupère un dossier médical par ID
-- `GET /medical-records/patient/{email}` - Liste les dossiers médicaux d'un patient
-- `POST /medical-records` - Crée un nouveau dossier médical
-- `PUT /medical-records/{id}` - Met à jour un dossier médical
-- `DELETE /medical-records/{id}` - Supprime un dossier médical
+### API Gateway - Port 8000
 
-Documentation API :
-- Swagger UI : http://localhost:8004/swagger-ui/index.html
-- Documentation OpenAPI : http://localhost:8004/api-docs
+Point d'entrée unique pour tous les services avec routes :
 
-### 5. Gateway Service (Port: 8000)
-Point d'entrée unique pour tous les services :
-- `/patients/**` - Redirige vers Patient Service
-- `/practitioners/**` - Redirige vers Practitioner Service
-- `/appointments/**` - Redirige vers Appointment Service
-- `/medical-records/**` - Redirige vers Medical Record Service
+- `/patients/**` → Patient Service
+- `/practitioners/**` → Practitioner Service
+- `/appointments/**` → Appointment Service
+- `/medical-records/**` → Medical Record Service
 
-## Configuration
-Chaque service utilise une base de données H2 en mémoire avec :
-- Console H2 accessible à `/h2-console`
-- URL JDBC : `jdbc:h2:mem:{service}db`
-- Utilisateur : `sa`
-- Mot de passe : `password`
+### Services Métier
 
-## Démarrage
-1. Lancer les services dans l'ordre :
-   - Patient Service
-   - Practitioner Service
-   - Appointment Service
-   - Medical Record Service
-   - Gateway Service
+1. **Patient Service (Port: 8001)**
 
-2. Créer des données via les endpoints POST de chaque service
+   - Gestion des patients
+   - Base H2 : `jdbc:h2:mem:patientdb`
+   - Swagger : http://localhost:8001/swagger-ui/index.html
 
-3. Accéder aux services via le Gateway (port 8000) ou directement via leurs ports respectifs
+2. **Practitioner Service (Port: 8002)**
+
+   - Gestion des praticiens
+   - Base H2 : `jdbc:h2:mem:practitionerdb`
+   - Swagger : http://localhost:8002/swagger-ui/index.html
+
+3. **Appointment Service (Port: 8003)**
+
+   - Gestion des rendez-vous
+   - Base H2 : `jdbc:h2:mem:appointmentdb`
+   - Swagger : http://localhost:8003/swagger-ui/index.html
+
+4. **Medical Record Service (Port: 8004)**
+   - Gestion des dossiers médicaux
+   - Base H2 : `jdbc:h2:mem:medicalrecorddb`
+   - Swagger : http://localhost:8004/swagger-ui/index.html
+
+## Installation et Démarrage
+
+### Méthode 1 : Avec Docker
+
+1. Construire les images Docker :
+
+```bash
+docker-compose build
+```
+
+2. Démarrer les services :
+
+```bash
+docker-compose up -d
+```
+
+3. Vérifier que tous les services sont opérationnels via Eureka : http://localhost:8761
+
+### Méthode 2 : Sans Docker
+
+1. Démarrer les services dans l'ordre suivant :
+
+```bash
+# 1. Service Discovery (Eureka)
+cd eureka-server
+mvn spring-boot:run
+
+# 2. API Gateway
+cd ../gateway-service
+mvn spring-boot:run
+
+# 3. Services métier (dans des terminaux séparés)
+cd ../patient-service
+mvn spring-boot:run
+
+cd ../practitioner-service
+mvn spring-boot:run
+
+cd ../appointment-service
+mvn spring-boot:run
+
+cd ../medical-record-service
+mvn spring-boot:run
+```
+
+## Tests des Services
+
+### Via Swagger UI
+
+Chaque service dispose de sa propre interface Swagger :
+
+- Patient Service : http://localhost:8001/swagger-ui/index.html
+- Practitioner Service : http://localhost:8002/swagger-ui/index.html
+- Appointment Service : http://localhost:8003/swagger-ui/index.html
+- Medical Record Service : http://localhost:8004/swagger-ui/index.html
+
+### Via l'API Gateway
+
+Toutes les requêtes peuvent être faites via l'API Gateway (port 8000) :
+
+```bash
+# Exemples de requêtes
+curl http://localhost:8000/patients
+curl http://localhost:8000/practitioners
+curl http://localhost:8000/appointments
+curl http://localhost:8000/medical-records
+```
+
+## Bases de données
+
+Chaque service utilise sa propre base de données H2 en mémoire. Les consoles H2 sont accessibles aux URLs :
+
+- Patient DB : http://localhost:8001/h2-console
+- Practitioner DB : http://localhost:8002/h2-console
+- Appointment DB : http://localhost:8003/h2-console
+- Medical Record DB : http://localhost:8004/h2-console
+
+Configuration de connexion pour chaque console H2 :
+
+- JDBC URL : voir la section "Services Métier"
+- Username : sa
+- Password : password
